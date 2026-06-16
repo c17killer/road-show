@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Road Show</title>
+<title>Road Show Map</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <style>
 body {
@@ -13,20 +16,25 @@ body {
   color: white;
 }
 
-header {
-  padding: 12px;
+#top {
+  padding: 10px;
   background: #1c1c1c;
+  font-size: 14px;
 }
 
-section {
-  padding: 12px;
-  border-top: 1px solid #333;
+#map {
+  height: 65vh;
+  width: 100%;
+}
+
+.panel {
+  padding: 10px;
 }
 
 .card {
   background: #1c1c1c;
   padding: 10px;
-  margin: 10px 0;
+  margin-bottom: 10px;
   border-radius: 10px;
 }
 </style>
@@ -34,43 +42,79 @@ section {
 
 <body>
 
-<header>
-🚗 Road Show — MVP
-</header>
-
-<section>
-<h3>🗺 Карта (пока заглушка)</h3>
-<div class="card">
-Здесь позже будет карта с маршрутом СПб → Москва → Ярославль
-</div>
-</section>
-
-<section>
-<h3>🎮 Миссии</h3>
-
-<div class="card">
-🟢 Активная миссия: (пока пусто)
+<div id="top">
+🚗 Road Show | Leaflet MVP | режим: LIVE SIM
 </div>
 
-<div class="card">
-🟡 Очередь миссий:
-<ul>
-<li>📸 Фото остановки</li>
-<li>🎵 Выбрать музыку</li>
-<li>🍔 Еда на заправке</li>
-</ul>
+<div id="map"></div>
+
+<div class="panel">
+
+  <div class="card">
+    🧭 Маршрут: СПб → Москва → Ярославль → Тверь
+  </div>
+
+  <div class="card">
+    🚗 Машина двигается по маршруту (симуляция)
+  </div>
+
 </div>
 
-</section>
+<script>
 
-<section>
-<h3>💰 Донаты</h3>
+// 🗺 карта
+const map = L.map('map').setView([58.0, 37.5], 5);
 
-<div class="card">
-DonationAlerts будет тут (позже вставим виджет)
-</div>
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+}).addTo(map);
 
-</section>
+// 📍 точки маршрута
+const route = [
+  [59.9311, 30.3609, "СПб"],
+  [56.8389, 60.6057, "по пути"],
+  [55.7558, 37.6173, "Москва"],
+  [57.6261, 39.8845, "Ярославль"],
+  [56.8587, 35.9006, "Тверь"]
+];
+
+// 🟢 маркеры городов
+route.forEach(p => {
+  L.marker([p[0], p[1]]).addTo(map)
+    .bindPopup(p[2]);
+});
+
+// 🔵 линия маршрута
+const polyline = L.polyline(route.map(p => [p[0], p[1]]), {
+  color: 'cyan'
+}).addTo(map);
+
+map.fitBounds(polyline.getBounds());
+
+// 🚗 “машина”
+let car = L.marker(route[0], {
+  icon: L.icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/744/744465.png",
+    iconSize: [32, 32]
+  })
+}).addTo(map);
+
+// 🎬 движение
+let i = 0;
+
+setInterval(() => {
+  i++;
+
+  if (i >= route.length) i = 0;
+
+  const pos = route[i];
+
+  car.setLatLng([pos[0], pos[1]]);
+  map.panTo([pos[0], pos[1]]);
+
+}, 4000);
+
+</script>
 
 </body>
 </html>
