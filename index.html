@@ -37,6 +37,12 @@ body {
   margin-bottom: 10px;
   border-radius: 10px;
 }
+
+button {
+  margin-right: 5px;
+  padding: 8px;
+  cursor: pointer;
+}
 </style>
 </head>
 
@@ -58,18 +64,41 @@ body {
     🚗 Машина двигается по маршруту (симуляция)
   </div>
 
+  <div class="card">
+    🎮 Миссии
+  </div>
+
+  <div class="card">
+    🟡 Активная миссия:
+    <div id="activeMission">— нет миссии</div>
+  </div>
+
+  <div class="card">
+    📋 Очередь:
+    <ul id="missionQueue"></ul>
+  </div>
+
+  <div class="card">
+    <button onclick="completeMission()">✅ Выполнить</button>
+    <button onclick="nextMission()">➡️ Следующая</button>
+  </div>
+
 </div>
 
 <script>
 
-// 🗺 карта
+// =====================
+// 🗺 КАРТА
+// =====================
 const map = L.map('map').setView([58.0, 37.5], 5);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
 
-// 📍 точки маршрута
+// =====================
+// 📍 МАРШРУТ
+// =====================
 const route = [
   [59.9311, 30.3609, "СПб"],
   [56.8389, 60.6057, "по пути"],
@@ -78,20 +107,22 @@ const route = [
   [56.8587, 35.9006, "Тверь"]
 ];
 
-// 🟢 маркеры городов
+// маркеры
 route.forEach(p => {
   L.marker([p[0], p[1]]).addTo(map)
     .bindPopup(p[2]);
 });
 
-// 🔵 линия маршрута
+// линия маршрута
 const polyline = L.polyline(route.map(p => [p[0], p[1]]), {
   color: 'cyan'
 }).addTo(map);
 
 map.fitBounds(polyline.getBounds());
 
-// 🚗 “машина”
+// =====================
+// 🚗 МАШИНА
+// =====================
 let car = L.marker(route[0], {
   icon: L.icon({
     iconUrl: "https://cdn-icons-png.flaticon.com/512/744/744465.png",
@@ -99,12 +130,11 @@ let car = L.marker(route[0], {
   })
 }).addTo(map);
 
-// 🎬 движение
+// =====================
+// 🎬 ДВИЖЕНИЕ
+// =====================
 let i = 0;
-
 let step = 0;
-
-// сколько “шагов” между точками
 const STEPS = 30;
 
 function interpolate(a, b, t) {
@@ -133,6 +163,52 @@ setInterval(() => {
   }
 
 }, 200);
+
+// =====================
+// 🎮 МИССИИ
+// =====================
+let missions = [
+  "Сделать фото дороги",
+  "Включить любимую песню",
+  "Остановиться и размяться",
+  "Купить воду/кофе",
+  "Найти странный дорожный знак"
+];
+
+let activeMission = null;
+
+function renderMissions() {
+  const queue = document.getElementById("missionQueue");
+  queue.innerHTML = "";
+
+  missions.forEach(m => {
+    const li = document.createElement("li");
+    li.textContent = m;
+    queue.appendChild(li);
+  });
+
+  document.getElementById("activeMission").textContent =
+    activeMission || "— нет миссии";
+}
+
+function nextMission() {
+  if (missions.length === 0) {
+    activeMission = null;
+    renderMissions();
+    return;
+  }
+
+  activeMission = missions.shift();
+  renderMissions();
+}
+
+function completeMission() {
+  activeMission = null;
+  renderMissions();
+}
+
+// старт
+renderMissions();
 
 </script>
 
