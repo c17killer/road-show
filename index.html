@@ -102,17 +102,38 @@ let car = L.marker(route[0], {
 // 🎬 движение
 let i = 0;
 
+let i = 0;
+let step = 0;
+
+// сколько “шагов” между точками
+const STEPS = 30;
+
+function interpolate(a, b, t) {
+  return [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t
+  ];
+}
+
 setInterval(() => {
-  i++;
+  const from = route[i];
+  const to = route[(i + 1) % route.length];
 
-  if (i >= route.length) i = 0;
+  const t = step / STEPS;
+  const pos = interpolate(from, to, t);
 
-  const pos = route[i];
+  car.setLatLng(pos);
+  map.panTo(pos);
 
-  car.setLatLng([pos[0], pos[1]]);
-  map.panTo([pos[0], pos[1]]);
+  step++;
 
-}, 4000);
+  if (step > STEPS) {
+    step = 0;
+    i++;
+    if (i >= route.length - 1) i = 0;
+  }
+
+}, 200);
 
 </script>
 
