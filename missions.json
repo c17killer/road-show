@@ -1,0 +1,193 @@
+{
+  "version": "1.0",
+  "title": "Road Show Missions Menu",
+  "currency": "RUB",
+  "categories": [
+    {
+      "id": "road",
+      "name": "Движение и дорога",
+      "missions": [
+        {
+          "id": "road_story",
+          "name": "Рассказать историю из прошлого по теме зрителя",
+          "type": "road",
+          "price": 300
+        },
+        {
+          "id": "road_commentary",
+          "name": "Прокомментировать дорогу как спортивный комментатор (1–2 минуты)",
+          "type": "road",
+          "price": 200
+        },
+        {
+          "id": "road_questions",
+          "name": "Ответить на 3 вопроса зрителей подряд",
+          "type": "road",
+          "price": 250
+        },
+        {
+          "id": "road_rating",
+          "name": "Оценить участок дороги (1–10 и объяснить почему)",
+          "type": "road",
+          "price": 150
+        },
+        {
+          "id": "road_next_stop",
+          "name": "Выбрать следующую остановку из маршрута",
+          "type": "road",
+          "price": 150
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "name": "Музыка и атмосфера",
+      "missions": [
+        {
+          "id": "music_track",
+          "name": "Включить трек, предложенный зрителем",
+          "type": "music",
+          "price": 300
+        },
+        {
+          "id": "music_family_vote",
+          "name": "Семейная песня момента (голосование в машине)",
+          "type": "music",
+          "price": 250
+        },
+        {
+          "id": "music_guess",
+          "name": "Угадать песню за 5–10 секунд",
+          "type": "music",
+          "price": 200
+        },
+        {
+          "id": "music_mood",
+          "name": "Сменить музыкальное настроение (режим)",
+          "type": "music",
+          "price": 150
+        },
+        {
+          "id": "music_radio",
+          "name": "5 минут радио-режима (только дорога и комментарии)",
+          "type": "music",
+          "price": 100
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "name": "Остановки и быт",
+      "missions": [
+        {
+          "id": "stop_coffee",
+          "name": "Кофе / чай на заправке",
+          "type": "stop",
+          "price": 400
+        },
+        {
+          "id": "stop_food",
+          "name": "Выбрать еду в кафе из 2–3 вариантов",
+          "type": "stop",
+          "price": 300
+        },
+        {
+          "id": "stop_walk",
+          "name": "Мини-прогулка 5–10 минут с комментарием места",
+          "type": "stop",
+          "price": 250
+        },
+        {
+          "id": "stop_photo",
+          "name": "Фото самого необычного объекта на остановке",
+          "type": "stop",
+          "price": 200
+        },
+        {
+          "id": "stop_random_buy",
+          "name": "Случайная покупка до 700 ₽",
+          "type": "stop",
+          "price": 500
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "name": "Семейный контент",
+      "missions": [
+        {
+          "id": "family_quiz",
+          "name": "Мини-викторина для ребёнка",
+          "type": "family",
+          "price": 200
+        },
+        {
+          "id": "family_fact",
+          "name": "Факт дня для ребёнка",
+          "type": "family",
+          "price": 150
+        },
+        {
+          "id": "family_city_guess",
+          "name": "Угадать город по описанию",
+          "type": "family",
+          "price": 200
+        },
+        {
+          "id": "family_topic",
+          "name": "Выбрать тему семейного разговора",
+          "type": "family",
+          "price": 150
+        },
+        {
+          "id": "family_story",
+          "name": "Каждый член семьи рассказывает короткую историю",
+          "type": "family",
+          "price": 250
+        }
+      ]
+    },
+    {
+      "id": "interactive",
+      "name": "Интерактив и шоу",
+      "missions": [
+        {
+          "id": "int_vote",
+          "name": "Голосование зрителей между двумя вариантами",
+          "type": "interactive",
+          "price": 300
+        },
+        {
+          "id": "int_blind_choice",
+          "name": "Слепой выбор (без подсказки зрителей)",
+          "type": "interactive",
+          "price": 250
+        },
+        {
+          "id": "int_random",
+          "name": "Рандом-челлендж из меню",
+          "type": "interactive",
+          "price": 300
+        },
+        {
+          "id": "int_observer_mode",
+          "name": "10 минут режим наблюдателя",
+          "type": "interactive",
+          "price": 200
+        },
+        {
+          "id": "int_microquest",
+          "name": "Мини-квест на остановке",
+          "type": "interactive",
+          "price": 300
+        },
+        {
+          "id": "int_question_any",
+          "name": "Вопрос без фильтра (в рамках приличия)",
+          "type": "interactive",
+          "price": 350
+        }
+      ]
+    }
+  ]
+}
