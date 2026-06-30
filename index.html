@@ -167,13 +167,15 @@ setInterval(() => {
 // =====================
 // 🎮 МИССИИ
 // =====================
-let missions = [
-  "Сделать фото дороги",
-  "Включить любимую песню",
-  "Остановиться и размяться",
-  "Купить воду/кофе",
-  "Найти странный дорожный знак"
-];
+let missions = [];
+
+fetch("./missions.json")
+  .then(res => res.json())
+  .then(data => {
+    // расплющиваем категории в один список (пока упрощённо)
+    missions = data.categories.flatMap(c => c.missions);
+    renderMissions();
+  });
 
 let activeMission = null;
 
