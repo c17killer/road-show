@@ -172,7 +172,6 @@ let missions = [];
 fetch("./missions.json")
   .then(res => res.json())
   .then(data => {
-    // расплющиваем категории в один список (пока упрощённо)
     missions = data.categories.flatMap(c => c.missions);
     renderMissions();
   });
@@ -185,12 +184,12 @@ function renderMissions() {
 
   missions.forEach(m => {
     const li = document.createElement("li");
-    li.textContent = m;
+    li.textContent = m.name; // ✅ ВАЖНО
     queue.appendChild(li);
   });
 
   document.getElementById("activeMission").textContent =
-    activeMission || "— нет миссии";
+    activeMission ? activeMission.name : "— нет миссии"; // ✅ ВАЖНО
 }
 
 function nextMission() {
@@ -200,7 +199,7 @@ function nextMission() {
     return;
   }
 
-  activeMission = missions.shift();
+  activeMission = missions.shift(); // OK (объект)
   renderMissions();
 }
 
