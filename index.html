@@ -40,7 +40,7 @@ body {
 
 button {
   margin-right: 5px;
-  padding: 8px;
+  padding: 6px 10px;
   cursor: pointer;
 }
 </style>
@@ -49,7 +49,7 @@ button {
 <body>
 
 <div id="top">
-🚗 Road Show | Leaflet MVP | режим: LIVE SIM
+🚗 Road Show | Leaflet MVP | LIVE
 </div>
 
 <div id="map"></div>
@@ -58,10 +58,6 @@ button {
 
   <div class="card">
     🧭 Маршрут: СПб → Москва → Ярославль → Тверь
-  </div>
-
-  <div class="card">
-    🚗 Машина двигается по маршруту (симуляция)
   </div>
 
   <div class="card">
@@ -79,8 +75,8 @@ button {
   </div>
 
   <div class="card">
+    <button onclick="nextMission()">➡️ Взять следующий</button>
     <button onclick="completeMission()">✅ Выполнено</button>
-    <button onclick="nextMission()">➡️ Взять следующий заказ</button>
   </div>
 
 </div>
@@ -163,12 +159,14 @@ setInterval(() => {
 }, 200);
 
 // =====================
-// 🎮 СИСТЕМА МИССИЙ
+// 🎮 МИССИИ / ОЧЕРЕДЬ
 // =====================
 
 let missions = [];
 let orders = [];
 let activeOrder = null;
+let done = [];
+let skipped = [];
 
 // загрузка миссий
 fetch("./missions.json")
@@ -176,17 +174,17 @@ fetch("./missions.json")
   .then(data => {
     missions = data.categories.flatMap(c => c.missions);
 
-    // тестовые “донаты”
-    addOrder(missions[0], "test");
-    addOrder(missions[1], "test");
-    addOrder(missions[2], "test");
+    // тестовые заказы (симуляция донатов)
+    addOrder(missions[0]);
+    addOrder(missions[1]);
+    addOrder(missions[2]);
 
     renderOrders();
     renderActive();
   });
 
 // =====================
-// 🎁 ДОБАВЛЕНИЕ ЗАКАЗА (донат)
+// 🎁 ДОБАВИТЬ ЗАКАЗ
 // =====================
 function addOrder(mission, source = "test") {
   orders.push({
@@ -195,7 +193,7 @@ function addOrder(mission, source = "test") {
     name: mission.name,
     price: mission.price,
     status: "pending",
-    source: source,
+    source,
     createdAt: Date.now()
   });
 
@@ -209,34 +207,40 @@ function renderOrders() {
   const queue = document.getElementById("missionQueue");
   queue.innerHTML = "";
 
-  orders.forEach(o => {
+  orders.forEach((o, index) => {
     const li = document.createElement("li");
-    li.textContent = `${o.name} (${o.price}₽)`;
+
+    li.innerHTML = `
+      <b>${o.name}</b> (${o.price}₽)
+      <br/>
+      <button onclick="moveToTop(${index})">🔼</button>
+      <button onclick="cancelOrder(${index})">❌</button>
+    `;
+
     queue.appendChild(li);
   });
 }
 
 // =====================
-// 🔎 ПОИСК МИССИИ ПО ID
+// 🔼 ПОДНЯТЬ ВВЕРХ
 // =====================
-function getMissionById(id) {
-  return missions.find(m => m.id === id);
+function moveToTop(index) {
+  const item = orders.splice(index, 1)[0];
+  orders.unshift(item);
+  renderOrders();
 }
 
 // =====================
-// 🎬 АКТИВНАЯ МИССИЯ
+// ❌ ОТМЕНА
 // =====================
-function renderActive() {
-  const mission = activeOrder
-    ? getMissionById(activeOrder.missionId)
-    : null;
-
-  document.getElementById("activeMission").textContent =
-    mission ? mission.name : "— нет активной миссии";
+function cancelOrder(index) {
+  skipped.push(orders[index]);
+  orders.splice(index, 1);
+  renderOrders();
 }
 
 // =====================
-// ➡️ ВЗЯТЬ СЛЕДУЮЩИЙ ЗАКАЗ
+// 🎬 ВЗЯТЬ СЛЕДУЮЩИЙ
 // =====================
 function nextMission() {
   if (orders.length === 0) return;
@@ -249,12 +253,35 @@ function nextMission() {
 }
 
 // =====================
+// 🔎 ПОИСК МИССИИ
+// =====================
+function getMissionById(id) {
+  return missions.find(m => m.id === id);
+}
+
+// =====================
+// 🟡 АКТИВНАЯ МИССИЯ
+// =====================
+function renderActive() {
+  const mission = activeOrder
+    ? getMissionById(activeOrder.missionId)
+    : null;
+
+  document.getElementById("activeMission").innerHTML =
+    mission
+      ? `<b>${mission.name}</b><br/>${mission.price}₽`
+      : "— нет активной миссии";
+}
+
+// =====================
 // ✅ ВЫПОЛНЕНО
 // =====================
 function completeMission() {
   if (!activeOrder) return;
 
   activeOrder.status = "done";
+  done.push(activeOrder);
+
   activeOrder = null;
 
   renderOrders();
