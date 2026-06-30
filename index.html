@@ -70,7 +70,7 @@ button {
 
   <div class="card">
     🟡 Активная миссия:
-    <div id="activeMission">— нет миссии</div>
+    <div id="activeMission">— нет активной миссии</div>
   </div>
 
   <div class="card">
@@ -163,36 +163,43 @@ setInterval(() => {
 }, 200);
 
 // =====================
-// 🎮 СИСТЕМА МИССИЙ (НОВАЯ)
+// 🎮 СИСТЕМА МИССИЙ
 // =====================
 
 let missions = [];
 let orders = [];
-let activeMission = null;
+let activeOrder = null;
 
-// загрузка меню
+// загрузка миссий
 fetch("./missions.json")
   .then(res => res.json())
   .then(data => {
     missions = data.categories.flatMap(c => c.missions);
 
-    // тестовые заказы (пока без DonationAlerts)
-    addOrder(missions[0]);
-    addOrder(missions[1]);
-    addOrder(missions[2]);
+    // тестовые “донаты”
+    addOrder(missions[0], "test");
+    addOrder(missions[1], "test");
+    addOrder(missions[2], "test");
 
     renderOrders();
     renderActive();
   });
 
 // =====================
-// 🎫 ДОБАВЛЕНИЕ ЗАКАЗА
+// 🎁 ДОБАВЛЕНИЕ ЗАКАЗА (донат)
 // =====================
-function addOrder(mission) {
+function addOrder(mission, source = "test") {
   orders.push({
-    ...mission,
-    status: "pending"
+    id: crypto.randomUUID(),
+    missionId: mission.id,
+    name: mission.name,
+    price: mission.price,
+    status: "pending",
+    source: source,
+    createdAt: Date.now()
   });
+
+  renderOrders();
 }
 
 // =====================
@@ -210,21 +217,32 @@ function renderOrders() {
 }
 
 // =====================
-// 🎬 АКТИВНАЯ МИССИЯ
+// 🔎 ПОИСК МИССИИ ПО ID
 // =====================
-function renderActive() {
-  document.getElementById("activeMission").textContent =
-    activeMission ? activeMission.name : "— нет активной миссии";
+function getMissionById(id) {
+  return missions.find(m => m.id === id);
 }
 
 // =====================
-// ➡️ ВЗЯТЬ СЛЕДУЮЩУЮ
+// 🎬 АКТИВНАЯ МИССИЯ
+// =====================
+function renderActive() {
+  const mission = activeOrder
+    ? getMissionById(activeOrder.missionId)
+    : null;
+
+  document.getElementById("activeMission").textContent =
+    mission ? mission.name : "— нет активной миссии";
+}
+
+// =====================
+// ➡️ ВЗЯТЬ СЛЕДУЮЩИЙ ЗАКАЗ
 // =====================
 function nextMission() {
   if (orders.length === 0) return;
 
-  activeMission = orders.shift();
-  activeMission.status = "active";
+  activeOrder = orders.shift();
+  activeOrder.status = "active";
 
   renderOrders();
   renderActive();
@@ -234,10 +252,10 @@ function nextMission() {
 // ✅ ВЫПОЛНЕНО
 // =====================
 function completeMission() {
-  if (!activeMission) return;
+  if (!activeOrder) return;
 
-  activeMission.status = "done";
-  activeMission = null;
+  activeOrder.status = "done";
+  activeOrder = null;
 
   renderOrders();
   renderActive();
